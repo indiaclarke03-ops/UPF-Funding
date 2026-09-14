@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Public Money, Ultra-Processed Food</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root {
+    --navy: #1F3864;
+    --navy-deep: #14213D;
+    --copper: #B05A2B;
+    --blue-mid: #3B6EA5;
+    --grey: #6B7280;
+    --bg: #FFFFFF;
+    --ink: #14213D;
+    --tier-t1: var(--navy-deep);
+    --tier-t2: var(--blue-mid);
+    --tier-t3: var(--copper);
+    --tier-contested: var(--grey);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ---------- header ---------- */
+  header.site-header {
+    background: var(--navy);
+    color: #fff;
+    padding: 48px 0 40px;
+  }
+  header.site-header h1 {
+    margin: 0 0 12px;
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  header.site-header p.subtitle {
+    margin: 0;
+    font-size: 19px;
+    color: #C9D4E8;
+    font-weight: 400;
+  }
+
+  /* ---------- section spacing ---------- */
+  section {
+    padding: 56px 0;
+    border-bottom: 1px solid #E7E9EE;
+  }
+  section:last-of-type { border-bottom: none; }
+  section h2 {
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--copper);
+    font-weight: 700;
+    margin: 0 0 28px;
+  }
+
+  /* ---------- headline panel ---------- */
+  .headline-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .headline-card {
+    background: #F7F5F1;
+    border: 1px solid #E7E1D6;
+    border-radius: 10px;
+    padding: 28px 24px;
+    text-align: left;
+  }
+  .headline-card .label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 14px;
+    min-height: 44px;
+  }
+  .headline-card .amount {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--copper);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .headline-card.final .amount { color: var(--navy-deep); }
+  .headline-card .count {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-top: 10px;
+  }
+  .headline-note {
+    margin: 28px 0 0;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.5;
+    max-width: 900px;
+  }
+
+  @media (max-width: 860px) {
+    .headline-cards { grid-template-columns: 1fr; }
+  }
+
+  footer.site-footer {
+    padding: 32px 0 56px;
+    font-size: 13px;
+    color: var(--grey);
+    line-height: 1.6;
+    max-width: 900px;
+  }
+
+  /* ---------- controls ---------- */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 40px;
+    margin-bottom: 28px;
+    padding: 24px;
+    background: #F7F5F1;
+    border: 1px solid #E7E1D6;
+    border-radius: 10px;
+  }
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .control-group .ctl-label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--navy);
+  }
+  .year-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .year-row input[type="range"] {
+    width: 280px;
+    accent-color: var(--copper);
+  }
+  #year-display {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--navy-deep);
+    min-width: 62px;
+  }
+  .tier-checkboxes {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .tier-checkboxes label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .tier-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .tier-dot.T1 { background: var(--tier-t1); }
+  .tier-dot.T2 { background: var(--tier-t2); }
+  .tier-dot.T3 { background: var(--tier-t3); }
+  .tier-dot.CONTESTED { background: var(--tier-contested); }
+
+  .dataset-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy-deep);
+    cursor: pointer;
+    max-width: 320px;
+  }
+  .dataset-toggle input { transform: scale(1.3); accent-color: var(--copper); }
+
+  /* ---------- map row ---------- */
+  .map-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  #map {
+    height: 560px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #E7E9EE;
+    background: #eef1f5;
+  }
+  .side-panel {
+    background: #F7F5F1;
+    border: 1px solid #E7E1D6;
+    border-radius: 10px;
+    padding: 20px;
+    height: 560px;
+    overflow-y: auto;
+  }
+  .side-panel h3 {
+    margin: 0 0 4px;
+    font-size: 17px;
+    color: var(--navy-deep);
+  }
+  .side-panel .panel-sub {
+    font-size: 13px;
+    color: var(--grey);
+    margin-bottom: 14px;
+  }
+  .side-panel .back-link {
+    display: inline-block;
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--copper);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .region-item, .proj-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #E7E1D6;
+  }
+  .region-item:last-child, .proj-item:last-child { border-bottom: none; }
+  .region-item .r-name {
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+  }
+  .region-item .r-meta { font-size: 13px; color: var(--grey); margin-top: 2px; }
+  .proj-item .p-company {
+    font-weight: 700;
+    color: var(--navy-deep);
+    font-size: 15px;
+  }
+  .proj-item .p-meta {
+    font-size: 13px;
+    color: var(--ink);
+    margin-top: 3px;
+    line-height: 1.5;
+  }
+  .proj-item .p-reason {
+    font-size: 13px;
+    color: var(--grey);
+    margin-top: 4px;
+    font-style: italic;
+  }
+  .proj-item a {
+    font-size: 13px;
+    color: var(--copper);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .tier-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+  .tier-pill.T1 { background: var(--tier-t1); }
+  .tier-pill.T2 { background: var(--tier-t2); }
+  .tier-pill.T3 { background: var(--tier-t3); }
+  .tier-pill.CONTESTED { background: var(--tier-contested); }
+
+  @media (max-width: 900px) {
+    .map-row { grid-template-columns: 1fr; }
+    .side-panel { height: auto; max-height: 420px; }
+  }
+
+  /* ---------- trend chart ---------- */
+  .chart-wrap {
+    background: #F7F5F1;
+    border: 1px solid #E7E1D6;
+    border-radius: 10px;
+    padding: 28px;
+    height: 420px;
+  }
+  .chart-legend-note {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--grey);
+  }
+
+  /* ---------- top projects table ---------- */
+  table.top-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  table.top-table th {
+    text-align: left;
+    padding: 12px 14px;
+    background: var(--navy);
+    color: #fff;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  table.top-table th .sort-arrow { opacity: 0.55; font-size: 11px; margin-left: 4px; }
+  table.top-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #E7E9EE;
+    vertical-align: top;
+  }
+  table.top-table tbody tr:hover { background: #F7F5F1; }
+  table.top-table tbody tr.highlight {
+    background: #FBEEE4;
+  }
+  table.top-table tbody tr.highlight:hover { background: #F6E1CF; }
+  table.top-table .amount-cell { font-weight: 800; color: var(--navy-deep); white-space: nowrap; }
+  table.top-table .sector-cell { color: var(--grey); font-size: 13px; }
+  table.top-table .highlight-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--copper);
+    border: 1px solid var(--copper);
+    border-radius: 999px;
+    padding: 1px 8px;
+    margin-left: 8px;
+  }
+  table.top-table a.row-link {
+    color: var(--copper);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <h1>Public Money, Ultra-Processed Food</h1>
+    <p class="subtitle">IFC commitments to the ultra-processed food value chain, 1995&ndash;2026</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section id="headline">
+    <h2>The Same Portfolio, Measured Three Ways</h2>
+    <div class="headline-cards">
+      <div class="headline-card">
+        <div class="label">Company names only</div>
+        <div class="amount" data-target-billions="0" id="card-keyword-amount">$0.0bn</div>
+        <div class="count" id="card-keyword-count">0 projects</div>
+      </div>
+      <div class="headline-card">
+        <div class="label">+ IFC&rsquo;s own sector labels</div>
+        <div class="amount" data-target-billions="0" id="card-sectorrule-amount">$0.0bn</div>
+        <div class="count" id="card-sectorrule-count">0 projects</div>
+      </div>
+      <div class="headline-card final">
+        <div class="label">+ disclosure documents</div>
+        <div class="amount" data-target-billions="0" id="card-full-amount">$0.0bn</div>
+        <div class="count" id="card-full-count">0 projects</div>
+      </div>
+    </div>
+    <p class="headline-note">
+      Same portfolio. The granular sector field exists on individual disclosure pages
+      but is not published in IFC&rsquo;s bulk dataset.
+    </p>
+  </section>
+
+  <section id="map-section">
+    <h2>Where the Money Went</h2>
+
+    <div class="controls">
+      <div class="control-group">
+        <div class="ctl-label">Cumulative through</div>
+        <div class="year-row">
+          <input type="range" id="year-slider" min="1995" max="2026" value="2026" step="1">
+          <span id="year-display">2026</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="ctl-label">Tiers shown</div>
+        <div class="tier-checkboxes">
+          <label><input type="checkbox" class="tier-check" value="T1" checked><span class="tier-dot T1"></span>T1 &ndash; makes UPF</label>
+          <label><input type="checkbox" class="tier-check" value="T2"><span class="tier-dot T2"></span>T2 &ndash; UPF inputs</label>
+          <label><input type="checkbox" class="tier-check" value="T3" checked><span class="tier-dot T3"></span>T3 &ndash; distributes UPF</label>
+          <label><input type="checkbox" class="tier-check" value="CONTESTED"><span class="tier-dot CONTESTED"></span>Contested</label>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="ctl-label">Data source</div>
+        <label class="dataset-toggle">
+          <input type="checkbox" id="dataset-only-toggle">
+          Show only what IFC&rsquo;s published dataset reveals
+        </label>
+      </div>
+    </div>
+
+    <div class="map-row">
+      <div id="map"></div>
+      <div class="side-panel" id="side-panel">
+        <h3>Regional / multi-country commitments</h3>
+        <div class="panel-sub">Not shown on the map &mdash; these projects are coded to an IFC region or subregion, not a single country.</div>
+        <div id="regional-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="trend-section">
+    <h2>UPF Commitments Over Time</h2>
+    <div class="chart-wrap">
+      <canvas id="trend-chart"></canvas>
+    </div>
+    <p class="chart-legend-note">
+      Bars: IFC commitments to T1 (makers) + T3 (distributors) UPF projects per five-year period.
+      Line: that amount as a share of total IFC commitments across all 2,336 scraped disclosure projects in the same period.
+    </p>
+  </section>
+
+  <section id="top-section">
+    <h2>Top 20 T1 / T3 Projects by Commitment</h2>
+    <div style="overflow-x:auto;">
+      <table class="top-table" id="top-table">
+        <thead>
+          <tr>
+            <th data-key="rank">#</th>
+            <th data-key="company">Company</th>
+            <th data-key="country">Country</th>
+            <th data-key="year">Year</th>
+            <th data-key="amount_musd">Amount<span class="sort-arrow">▾</span></th>
+            <th data-key="tier">Tier</th>
+            <th data-key="sector">IFC sector label</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="top-table-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    Source: IFC Investment Services Projects and IFC project disclosure pages, data as of
+    13 September 2026. Classification: IFC sector labels plus LLM classification of disclosure
+    text against the Nova framework. Research in progress.
+  </div>
+</footer>
+
+<script src="data/projects.js"></script>
+<script src="data/summary.js"></script>
+<script src="data/centroids.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  function animateCount(el, targetText, isCurrency) {
+    // targetText like "10600.6" (musd) -> animates to "$10.6bn"
+    var target = parseFloat(targetText);
+    var start = performance.now();
+    var duration = 1400;
+    function frame(now) {
+      var t = Math.min(1, (now - start) / duration);
+      var eased = 1 - Math.pow(1 - t, 3);
+      var val = target * eased;
+      el.textContent = "$" + (val / 1000).toFixed(1) + "bn";
+      if (t < 1) requestAnimationFrame(frame);
+      else el.textContent = "$" + (target / 1000).toFixed(1) + "bn";
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function animateCountInt(el, target) {
+    var start = performance.now();
+    var duration = 1400;
+    function frame(now) {
+      var t = Math.min(1, (now - start) / duration);
+      var eased = 1 - Math.pow(1 - t, 3);
+      var val = Math.round(target * eased);
+      el.textContent = val.toLocaleString() + " projects";
+      if (t < 1) requestAnimationFrame(frame);
+      else el.textContent = target.toLocaleString() + " projects";
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function initHeadline() {
+    var mc = window.SUMMARY_DATA.method_comparison;
+
+    animateCount(document.getElementById("card-keyword-amount"), mc.keyword_only.usd_musd);
+    animateCountInt(document.getElementById("card-keyword-count"), mc.keyword_only.projects);
+
+    animateCount(document.getElementById("card-sectorrule-amount"), mc.sector_rule.usd_musd);
+    animateCountInt(document.getElementById("card-sectorrule-count"), mc.sector_rule.projects);
+
+    animateCount(document.getElementById("card-full-amount"), mc.sector_plus_llm.usd_musd);
+    animateCountInt(document.getElementById("card-full-count"), mc.sector_plus_llm.projects);
+  }
+
+  /* ==================== MAP + CONTROLS ==================== */
+
+  var TIER_LABEL = { T1: "T1 – makes UPF", T2: "T2 – UPF inputs", T3: "T3 – distributes UPF", CONTESTED: "Contested" };
+
+  var state = {
+    yearMax: 2026,
+    tiers: new Set(["T1", "T3"]),
+    datasetOnly: false,
+  };
+
+  var map, markerLayer;
+  var GLOBAL_MAX_COUNTRY_USD = 0;
+
+  function fmtUsd(musd) {
+    if (musd >= 1000) return "$" + (musd / 1000).toFixed(2) + "bn";
+    return "$" + musd.toFixed(1) + "M";
+  }
+
+  function computeGlobalMax() {
+    var agg = {};
+    window.PROJECTS_DATA.forEach(function (p) {
+      if (!p.iso3) return;
+      agg[p.iso3] = (agg[p.iso3] || 0) + (p.amount_musd || 0);
+    });
+    var max = 0;
+    Object.keys(agg).forEach(function (k) { if (agg[k] > max) max = agg[k]; });
+    return max;
+  }
+
+  function getFiltered() {
+    return window.PROJECTS_DATA.filter(function (p) {
+      if (p.year !== null && p.year > state.yearMax) return false;
+      if (!state.tiers.has(p.tier)) return false;
+      if (state.datasetOnly && p.tier_source !== "sector_rule") return false;
+      return true;
+    });
+  }
+
+  function radiusFor(usd) {
+    var minR = 6, maxR = 46;
+    if (GLOBAL_MAX_COUNTRY_USD <= 0 || usd <= 0) return minR;
+    var t = Math.sqrt(usd / GLOBAL_MAX_COUNTRY_USD);
+    return minR + t * (maxR - minR);
+  }
+
+  function tierColor(tier) {
+    return { T1: "#14213D", T2: "#3B6EA5", T3: "#B05A2B", CONTESTED: "#6B7280" }[tier] || "#6B7280";
+  }
+
+  function initMap() {
+    map = L.map("map", { scrollWheelZoom: false }).setView([15, 10], 2);
+    // Esri's free "Light Gray Canvas" basemap (no API key required, unlike
+    // CartoDB's basemaps.cartocdn.com, which now returns a watermarked
+    // "API KEY REQUIRED" tile for anonymous/file:// requests).
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+      { attribution: "Tiles &copy; Esri", maxZoom: 16 }
+    ).addTo(map);
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 16 }
+    ).addTo(map);
+    markerLayer = L.layerGroup().addTo(map);
+  }
+
+  function projectListHtml(projects) {
+    if (!projects.length) return '<div class="panel-sub">No projects match the current filters.</div>';
+    return projects
+      .slice()
+      .sort(function (a, b) { return (b.amount_musd || 0) - (a.amount_musd || 0); })
+      .map(function (p) {
+        var amount = p.amount_musd !== null ? fmtUsd(p.amount_musd) : "amount n/d";
+        var url = p.url ? '<a href="' + p.url + '" target="_blank" rel="noopener">disclosure page →</a>' : "";
+        var reason = p.reason ? '<div class="p-reason">' + p.reason + "</div>" : "";
+        return (
+          '<div class="proj-item">' +
+          '<div class="p-company">' + (p.company || "(unnamed)") + "</div>" +
+          '<div class="p-meta">' +
+          '<span class="tier-pill ' + p.tier + '">' + p.tier + "</span> &nbsp; " +
+          (p.year || "n/d") + " &middot; " + amount + " &middot; " + p.sector +
+          "</div>" +
+          reason +
+          '<div style="margin-top:4px;">' + url + "</div>" +
+          "</div>"
+        );
+      })
+      .join("");
+  }
+
+  function showCountryPanel(iso3, countryName, projects) {
+    var panel = document.getElementById("side-panel");
+    var total = projects.reduce(function (s, p) { return s + (p.amount_musd || 0); }, 0);
+    panel.innerHTML =
+      '<a class="back-link" id="back-to-regional">← back to regional list</a>' +
+      "<h3>" + countryName + "</h3>" +
+      '<div class="panel-sub">' + projects.length + " project" + (projects.length === 1 ? "" : "s") +
+      " &middot; " + fmtUsd(total) + " total (current filters)</div>" +
+      projectListHtml(projects);
+    document.getElementById("back-to-regional").addEventListener("click", renderRegionalList);
+  }
+
+  function renderRegionalList() {
+    var filtered = getFiltered();
+    var regional = filtered.filter(function (p) { return p.is_regional; });
+    var byRegion = {};
+    regional.forEach(function (p) {
+      byRegion[p.country] = byRegion[p.country] || [];
+      byRegion[p.country].push(p);
+    });
+    var panel = document.getElementById("side-panel");
+    var names = Object.keys(byRegion).sort(function (a, b) {
+      var ta = byRegion[a].reduce(function (s, p) { return s + (p.amount_musd || 0); }, 0);
+      var tb = byRegion[b].reduce(function (s, p) { return s + (p.amount_musd || 0); }, 0);
+      return tb - ta;
+    });
+    var html =
+      "<h3>Regional / multi-country commitments</h3>" +
+      '<div class="panel-sub">Not shown on the map &mdash; coded to an IFC region or subregion, not a single country. ' +
+      names.length + " region" + (names.length === 1 ? "" : "s") + " match the current filters.</div>";
+    if (!names.length) {
+      html += '<div class="panel-sub">(none)</div>';
+    } else {
+      html += names
+        .map(function (name) {
+          var projs = byRegion[name];
+          var total = projs.reduce(function (s, p) { return s + (p.amount_musd || 0); }, 0);
+          return (
+            '<div class="region-item">' +
+            '<div class="r-name" data-region="' + name.replace(/"/g, "&quot;") + '">' + name + "</div>" +
+            '<div class="r-meta">' + projs.length + " project" + (projs.length === 1 ? "" : "s") + " &middot; " + fmtUsd(total) + "</div>" +
+            "</div>"
+          );
+        })
+        .join("");
+    }
+    panel.innerHTML = html;
+    Array.prototype.forEach.call(panel.querySelectorAll(".r-name"), function (el) {
+      el.addEventListener("click", function () {
+        var name = el.getAttribute("data-region");
+        showCountryPanel(null, name, byRegion[name]);
+      });
+    });
+  }
+
+  function renderMap() {
+    var filtered = getFiltered();
+    var byIso3 = {};
+    filtered.forEach(function (p) {
+      if (!p.iso3) return;
+      byIso3[p.iso3] = byIso3[p.iso3] || { country: p.country, projects: [] };
+      byIso3[p.iso3].projects.push(p);
+    });
+
+    markerLayer.clearLayers();
+
+    Object.keys(byIso3).forEach(function (iso3) {
+      var entry = byIso3[iso3];
+      var centroid = window.ISO3_CENTROID[iso3];
+      if (!centroid) return;
+      var total = entry.projects.reduce(function (s, p) { return s + (p.amount_musd || 0); }, 0);
+
+      // dominant tier by $ for marker colour
+      var tierTotals = {};
+      entry.projects.forEach(function (p) {
+        tierTotals[p.tier] = (tierTotals[p.tier] || 0) + (p.amount_musd || 0);
+      });
+      var dominantTier = Object.keys(tierTotals).sort(function (a, b) { return tierTotals[b] - tierTotals[a]; })[0];
+
+      var marker = L.circleMarker(centroid, {
+        radius: radiusFor(total),
+        color: "#fff",
+        weight: 1.5,
+        fillColor: tierColor(dominantTier),
+        fillOpacity: 0.78,
+      });
+      marker.bindTooltip(entry.country + " — " + fmtUsd(total) + " (" + entry.projects.length + ")");
+      marker.on("click", function () {
+        showCountryPanel(iso3, entry.country, entry.projects);
+      });
+      marker.addTo(markerLayer);
+    });
+  }
+
+  function refresh() {
+    renderMap();
+    renderRegionalList();
+  }
+
+  function initControls() {
+    var slider = document.getElementById("year-slider");
+    var display = document.getElementById("year-display");
+    slider.addEventListener("input", function () {
+      state.yearMax = parseInt(slider.value, 10);
+      display.textContent = state.yearMax;
+      refresh();
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll(".tier-check"), function (cb) {
+      cb.addEventListener("change", function () {
+        if (cb.checked) state.tiers.add(cb.value);
+        else state.tiers.delete(cb.value);
+        refresh();
+      });
+    });
+
+    document.getElementById("dataset-only-toggle").addEventListener("change", function (e) {
+      state.datasetOnly = e.target.checked;
+      refresh();
+    });
+  }
+
+  /* ==================== TREND CHART ==================== */
+
+  function initTrendChart() {
+    var periods = window.SUMMARY_DATA.by_period;
+    var labels = periods.map(function (p) { return p.period; });
+    var upfUsd = periods.map(function (p) { return p.upf_usd_musd; });
+    var share = periods.map(function (p) {
+      return p.total_usd_musd_all_scraped > 0
+        ? (p.upf_usd_musd / p.total_usd_musd_all_scraped) * 100
+        : 0;
+    });
+
+    var ctx = document.getElementById("trend-chart").getContext("2d");
+    new Chart(ctx, {
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            type: "bar",
+            label: "UPF commitments ($M)",
+            data: upfUsd,
+            backgroundColor: "#B05A2B",
+            borderRadius: 4,
+            yAxisID: "y",
+            order: 2,
+          },
+          {
+            type: "line",
+            label: "UPF share of all commitments (%)",
+            data: share,
+            borderColor: "#1F3864",
+            backgroundColor: "#1F3864",
+            pointBackgroundColor: "#1F3864",
+            pointRadius: 4,
+            borderWidth: 3,
+            tension: 0.25,
+            yAxisID: "y1",
+            order: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { position: "top", labels: { font: { size: 13, weight: "600" } } },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                if (ctx.dataset.yAxisID === "y1") return ctx.dataset.label + ": " + ctx.parsed.y.toFixed(1) + "%";
+                return ctx.dataset.label + ": $" + ctx.parsed.y.toLocaleString() + "M";
+              },
+            },
+          },
+        },
+        scales: {
+          y: {
+            type: "linear",
+            position: "left",
+            title: { display: true, text: "UPF commitments ($M)" },
+            grid: { color: "#E7E9EE" },
+          },
+          y1: {
+            type: "linear",
+            position: "right",
+            title: { display: true, text: "Share of all commitments (%)" },
+            grid: { drawOnChartArea: false },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  /* ==================== TOP PROJECTS TABLE ==================== */
+
+  var topSort = { key: "amount_musd", dir: -1 };
+  var HIGHLIGHT_PROJECT_NUMBER = "48820"; // PepsiCo Mexico, filed under sector "Other Food"
+
+  function renderTopTable() {
+    var rows = window.SUMMARY_DATA.top20_headline.slice();
+    rows.sort(function (a, b) {
+      var av = a[topSort.key], bv = b[topSort.key];
+      if (topSort.key === "company" || topSort.key === "country" || topSort.key === "sector" || topSort.key === "tier") {
+        av = (av || "").toLowerCase();
+        bv = (bv || "").toLowerCase();
+        return av < bv ? -topSort.dir : av > bv ? topSort.dir : 0;
+      }
+      return ((av || 0) - (bv || 0)) * topSort.dir;
+    });
+
+    var tbody = document.getElementById("top-table-body");
+    tbody.innerHTML = rows
+      .map(function (r, i) {
+        var isHighlight = r.project_number === HIGHLIGHT_PROJECT_NUMBER;
+        var amount = r.amount_musd !== null ? "$" + r.amount_musd.toLocaleString() + "M" : "n/d";
+        var link = r.url ? '<a class="row-link" href="' + r.url + '" target="_blank" rel="noopener">disclosure →</a>' : "";
+        return (
+          '<tr class="' + (isHighlight ? "highlight" : "") + '">' +
+          "<td>" + (i + 1) + "</td>" +
+          "<td>" + r.company + (isHighlight ? '<span class="highlight-tag">filed as &ldquo;Other Food&rdquo;</span>' : "") + "</td>" +
+          "<td>" + r.country + "</td>" +
+          "<td>" + (r.year || "n/d") + "</td>" +
+          '<td class="amount-cell">' + amount + "</td>" +
+          '<td><span class="tier-pill ' + r.tier + '">' + r.tier + "</span></td>" +
+          '<td class="sector-cell">' + r.sector + "</td>" +
+          "<td>" + link + "</td>" +
+          "</tr>"
+        );
+      })
+      .join("");
+  }
+
+  function initTopTable() {
+    renderTopTable();
+    Array.prototype.forEach.call(document.querySelectorAll("#top-table th[data-key]"), function (th) {
+      th.addEventListener("click", function () {
+        var key = th.getAttribute("data-key");
+        if (key === "rank") return;
+        if (topSort.key === key) topSort.dir *= -1;
+        else { topSort.key = key; topSort.dir = key === "company" || key === "country" || key === "sector" ? 1 : -1; }
+        renderTopTable();
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    initHeadline();
+    GLOBAL_MAX_COUNTRY_USD = computeGlobalMax();
+    initMap();
+    initControls();
+    refresh();
+    initTrendChart();
+    initTopTable();
+  });
+})();
+</script>
+</body>
+</html>

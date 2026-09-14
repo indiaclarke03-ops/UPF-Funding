@@ -1,0 +1,218 @@
+# Rule-based sector -> Nova tier mapping.
+# Applies to every project whose CSV "sector" value is NOT one of the 8
+# sectors sent to the LLM for per-project classification (see scripts/03_classify.py:
+# LLM_SECTORS). Edit freely -- 03_classify.py re-reads this file on every run.
+#
+# Tiers: T1 (makes UPF) / T2 (UPF input or packaging) / T3 (distributes/retails UPF)
+#        / CONTESTED (infant formula, fortified staples, therapeutic foods) / N (none of the above)
+#
+# BORDERLINE CALLS -- reviewed once, flagged here for a domain expert to confirm or override:
+#   - "Sugar and Confectionery": IFC's sector label conflates raw/refined sugar (T2) with
+#     confectionery (T1). Defaulted to T1 since "confectionery" is the more specific term
+#     and Sugarcane/Beets (raw cane growing) is already a separate sector coded N.
+#   - "Packaged Food": generic label, defaulted to T1 as the closest proxy for Nova group 4;
+#     could include some non-UPF packaged goods (e.g. plain canned vegetables).
+#   - "Grain Processing (Milling, Starch, Flour, Malt)": defaulted to T2 because industrial
+#     starch is an explicit T2 example, but this sector also covers plain flour/malt milling
+#     (Nova group 1/2, not really UPF-specific). Reasonable to reclassify some/all as N.
+#   - "Seafood Product Preparation and Packaging": defaulted to N (treated like "fresh meat
+#     and fish"), but could arguably belong with the Fruit/Veg preservation LLM-review group.
+
+sector_tiers:
+  # --- T1: makes ultra-processed food or drink (3 sectors) ---
+  "Packaged Food": T1
+  "Soft Drink": T1
+  "Sugar and Confectionery": T1
+
+  # --- T2: supplies inputs/packaging predominantly used by UPF makers (5 sectors) ---
+  "Grain Processing (Milling, Starch, Flour, Malt)": T2
+  "Metal Can and Other Metal Container (Including Aluminum Beverage Cans)": T2
+  "Palm Vegetable Oil": T2
+  "Sugar Refining and Sweetener Production": T2
+  "Vegetable Fats and Oils": T2
+
+  # --- T3: distributes or retails UPF at scale (3 sectors) ---
+  "Grocery Retail (Supermarkets, Hypermarkets, Convenience Stores etc.)": T3
+  "Retail (Including Supermarkets, Grocery Stores, etc.)": T3
+  "Wholesale (Including Grocery and Farm Products)": T3
+
+  # --- N: none of the above (primary agriculture, non-food, etc.) (179 sectors) ---
+  "Aerospace Product and Parts": N
+  "Agriculture, Construction, and Mining Machinery": N
+  "Airport Operations": N
+  "Alkalies and Chlorine": N
+  "All Other Basic Inorganic Chemical": N
+  "All Other Basic Organic Chemical": N
+  "All Other Chemical Product": N
+  "All Other Metal (Including Tin, Tantalum, Tungsten, etc.)": N
+  "Aluminum": N
+  "Animal Aquaculture": N
+  "Automotive Tires": N
+  "Automotive and Light Vehicle": N
+  "Breweries": N
+  "Bricks and Other Clay Products": N
+  "Bus and Heavy Commercial Vehicle": N
+  "Carbon Black": N
+  "Cattle Farming": N
+  "Cement": N
+  "City and Business Hotel": N
+  "Coal - Thermal Power Generation": N
+  "Coal Mining": N
+  "Coated Products": N
+  "Coffee, Cocoa, Tea": N
+  "Colleges, Universities, and Professional Schools": N
+  "Commercial Banking - Agency Line": N
+  "Commercial Banking - General": N
+  "Commercial Banking - Housing Finance": N
+  "Commercial Property - Diversified [Project only]": N
+  "Commercial Property - Industrial [Project only]": N
+  "Commercial Property - Office [Project only]": N
+  "Computer & Electronic Products(Computers & Peripherals, Communications Equip., Elec. Watches & Similar Elec. Products. Integrated Circuits & the application of Miniturization Technologies characterize this sector.)": N
+  "Computer Systems Design and Related Services (System Integration, Custom Computer Programming, IT Services etc.)": N
+  "Concrete Pipes and Blocks": N
+  "Construction and Real Estate": N
+  "Content (B2C Companies)": N
+  "Credit Information Services": N
+  "Deep Sea Water Transportation": N
+  "Derivatives (Includes Risk Management Entities)": N
+  "Development Finance Company": N
+  "Diversified Edible Agricultural Crops Production": N
+  "Domestic Mutual Fund/Unit Trust": N
+  "Electrical Machinery, Equipment and Components (Electric Lighting, Motors, Batteries, Insulated Wires and Cables, Fiber Optic Cable, Carbon and Graphite Products, etc.)": N
+  "Engineering Services": N
+  "Fabric Mills": N
+  "Fertilizer (Mixing Only)": N
+  "Finance & Insurance": N
+  "Finance Companies": N
+  "Finance Companies - Digital Finance [Project only]": N
+  "Finishing (Dyeing, Printing, Finishing, etc.)": N
+  "Fishing": N
+  "Fixed Telephony": N
+  "Flowers and Ornamental Plants": N
+  "Foreign Portfolio Debt Fund": N
+  "Foreign Portfolio Equity Fund - Country": N
+  "Foreign Portfolio Equity Fund - Global": N
+  "Foreign Portfolio Equity Fund - Regional": N
+  "Foreign Portfolio Equity Fund - Sector": N
+  "Forestry Fund": N
+  "Fruits and Vegetables": N
+  "Fund Management Company": N
+  "Furniture and Related Products": N
+  "Garment and Apparel (With Primary Textile Operations, Excluding Footwear)": N
+  "Garment and Apparel (Without Fabric , Excluding Footwear)": N
+  "Gas - Thermal Power Generation": N
+  "Glazed Ceramic Tiles": N
+  "Gold": N
+  "Grains and Beans": N
+  "Grains, Soy and Pulses": N
+  "Horticultural Products (Flowers)": N
+  "Household Appliances (Including Refrigerators, Laundry Machine, Dishwashers, etc.)": N
+  "Household Textile Products (Including Drapes, Mattress Covers, Carpets, Towels, etc.)": N
+  "Housing - For Lease [Project only]": N
+  "Housing - For Sale [Project only]": N
+  "Housing - Services [Project only]": N
+  "Industrial & Consumer Products": N
+  "Industrial Gases": N
+  "Industrial Machinery": N
+  "Infrastructure Fund": N
+  "Integrated Steel Works": N
+  "Integrated Textile Operation (Spinning, Weaving/Knitting, but no Garment )": N
+  "Internet Access Providers (Including ISPs, Datacenters)": N
+  "Iron (Pellets, etc.)": N
+  "Iron and Steel": N
+  "Iron and Steel Forging": N
+  "Iron and Steel Foundries/Castings": N
+  "Logging": N
+  "Man-Made Fibers (Including Nylon, Polyester, Rayon, etc.)": N
+  "Medical Equipment and Supplies Manufacturing": N
+  "Mini-Mills": N
+  "Miscellaneous Consumer Products (Including Sporting and Athletic Goods, Exercise Equipment, Jewelry, Musical Instruments, Toys, Games, Diversified)": N
+  "Miscellaneous and Industrial Ores (Including Magnesite, Fluorite, Sulfur, Soda Ash, Clays, Gypsum, Lime, Peat, Boron, Diatomite, Feldspar, etc.)": N
+  "Motor Bicycle (Including Bicycles)": N
+  "Motor Vehicle Parts": N
+  "Municipal Finance - Multiple Sectors [Project only]": N
+  "Municipal Finance - Transport and Roads [Project only]": N
+  "Municipal Finance - Water, Wastewater, District Heating, and Waste [Project only]": N
+  "Natural Fibers (Cotton, Sisal, Jute, etc.)": N
+  "Natural Forests": N
+  "Natural Gas Distribution": N
+  "Nitrogenous Fertilizer": N
+  "Oil Refineries": N
+  "Oil and Gas Production (Includes Development)": N
+  "Oil and Gas Transport or Pipeline": N
+  "Other (Agriculture and Forestry)": N
+  "Other (Copper, Rolled Copper, Brass, etc.)": N
+  "Other (For Non-Investment Projects)": N
+  "Other (Including General Freight Trucking)": N
+  "Other (Including Gypsum Tiles)": N
+  "Other (Including Restaurants, Amusement Parks, etc.)": N
+  "Other Agricultural Chemicals (Pesticides, etc.)": N
+  "Other Animal Production": N
+  "Other Funds": N
+  "Other Health Services": N
+  "Other Machinery (Including Metalworking Machinery, Ventilation, Heating and Air-Conditioning, etc.)": N
+  "Other Miscellaneous Fabricated Metal Products (Including Non-Wood Housing Products, Tanks, Cutlery, Kitchen Utensils and Handtools, etc.)": N
+  "Other Non-Depository Credit": N
+  "Other Non-Fund": N
+  "Other Paper (Including Multiple Types)": N
+  "Other Paper Products": N
+  "Other Petroleum and Coal Products": N
+  "Other Plastic and Rubber Products": N
+  "Other Sector Fund": N
+  "Other Services (Including IT Enabled Services)": N
+  "Other Steel Products (Including Wire, Metal Sheets etc.)": N
+  "Other Support Activities for Transportation (Grain Terminals, Cargo Terminals)": N
+  "Other Support Activities for Transportation (Grain Terminals, Cargo Terminals, Airport Operations)": N
+  "Other Textile Products (Including Industrial and Medical Products)": N
+  "Other Vegetable Oil Crops (Coconut, Rapeseed, Peanut, Sunflower, etc.)": N
+  "Other Wood Products (excluding Furniture)": N
+  "Paint and Adhesives": N
+  "Palm Oil": N
+  "Paper Packaging Products (Including Boxes, Cartons, etc.)": N
+  "Paper Tissue": N
+  "Paper for Printing and Writing": N
+  "Paperboard (Including Boxboard, Fiberboard)": N
+  "Petrochemical": N
+  "Petroleum Coke": N
+  "Pharmaceuticals and Medicine Manufacturing": N
+  "Phosphatic Fertilizer": N
+  "Plantation Forests": N
+  "Plastic Pipes": N
+  "Plastics Material and Resin": N
+  "Port and Harbor Operations": N
+  "Pottery, Ceramic, and Plumbing Fixtures (Including Kitchenware)": N
+  "Poultry Farming": N
+  "Printing/Publishing": N
+  "Private Equity/Venture Cap Fund - Country": N
+  "Private Equity/Venture Cap Fund - Regional": N
+  "Private Equity/Venture Cap Fund - Sector": N
+  "Pulp Mills": N
+  "Pulp and Paper Hygiene Products (Tissues, Diapers, Wipes, Feminine Care, Nonwovens, etc)": N
+  "Quarried Construction Materials (Including Asbestos, Crushed Stone Construction, Aggregates, Granite Block, Sand, etc.)": N
+  "Re-Rolling and Drawing of Purchased Steel": N
+  "Renewable Funds - Renewable Energy Generation": N
+  "Resort Hotel (Including Lodges)": N
+  "Sawmilling and Wood Preservation (including chipping)": N
+  "Seafood Product Preparation and Packaging": N
+  "Ship Building and Repairing": N
+  "Shoes and Leather Products": N
+  "Silver": N
+  "Soap and Cleaning Compound (Soap, Detergent, etc.)": N
+  "Solar - Renewable Energy Generation": N
+  "Solar Photovoltaic Equipment": N
+  "Solid Wood Products (VAP)": N
+  "Spinning (Yarn, Including Integrated with Fiber Production)": N
+  "Steel Pipe and Tube": N
+  "Storage (Including Agricultural Products)": N
+  "Sugarcane and Beets": N
+  "Tour Operators (i.e., Arranging and Assembling Tours)": N
+  "Trade Finance": N
+  "Transit and Ground Passenger Transporation": N
+  "Travel Agency": N
+  "Utilities": N
+  "Waste Collection Treatment and Management": N
+  "Wholesale Broadband - Terrestrial": N
+  "Wholesale Broadband - Terrestrial [Project only]": N
+  "Wind Turbine Machinery": N
+  "Wineries": N
+  "Wood Panels and Engineered Wood Products": N

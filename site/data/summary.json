@@ -1,0 +1,324 @@
+{
+  "totals_by_tier": {
+    "CONTESTED": {
+      "projects": 1,
+      "usd_musd": 8.0
+    },
+    "T1": {
+      "projects": 153,
+      "usd_musd": 6457.2
+    },
+    "T2": {
+      "projects": 123,
+      "usd_musd": 4575.4
+    },
+    "T3": {
+      "projects": 119,
+      "usd_musd": 4143.4
+    }
+  },
+  "totals_by_tier_source": {
+    "sector_rule": {
+      "projects": 264,
+      "usd_musd": 9207.4
+    },
+    "llm": {
+      "projects": 132,
+      "usd_musd": 5976.6
+    }
+  },
+  "method_comparison": {
+    "keyword_only": {
+      "projects": 38,
+      "usd_musd": 2852
+    },
+    "sector_rule": {
+      "projects": 185,
+      "usd_musd": 7036.5
+    },
+    "sector_plus_llm": {
+      "projects": 272,
+      "usd_musd": 10600.6
+    }
+  },
+  "by_period": [
+    {
+      "period": "1990-1994",
+      "upf_usd_musd": 0,
+      "upf_projects": 0,
+      "total_usd_musd_all_scraped": 0.2,
+      "total_projects_all_scraped": 1
+    },
+    {
+      "period": "1995-1999",
+      "upf_usd_musd": 535.9,
+      "upf_projects": 41,
+      "total_usd_musd_all_scraped": 5500.5,
+      "total_projects_all_scraped": 466
+    },
+    {
+      "period": "2000-2004",
+      "upf_usd_musd": 598.6,
+      "upf_projects": 27,
+      "total_usd_musd_all_scraped": 12231.9,
+      "total_projects_all_scraped": 286
+    },
+    {
+      "period": "2005-2009",
+      "upf_usd_musd": 1399.6,
+      "upf_projects": 50,
+      "total_usd_musd_all_scraped": 12407.9,
+      "total_projects_all_scraped": 363
+    },
+    {
+      "period": "2010-2014",
+      "upf_usd_musd": 1372.4,
+      "upf_projects": 45,
+      "total_usd_musd_all_scraped": 11874.6,
+      "total_projects_all_scraped": 327
+    },
+    {
+      "period": "2015-2019",
+      "upf_usd_musd": 1656.6,
+      "upf_projects": 45,
+      "total_usd_musd_all_scraped": 11187.7,
+      "total_projects_all_scraped": 267
+    },
+    {
+      "period": "2020-2024",
+      "upf_usd_musd": 4219.2,
+      "upf_projects": 48,
+      "total_usd_musd_all_scraped": 37622.3,
+      "total_projects_all_scraped": 420
+    },
+    {
+      "period": "2025-2029",
+      "upf_usd_musd": 818.3,
+      "upf_projects": 16,
+      "total_usd_musd_all_scraped": 18187.7,
+      "total_projects_all_scraped": 206
+    }
+  ],
+  "top20_headline": [
+    {
+      "project_number": "48820",
+      "company": "Comercializadora PepsiCo S. de R.L. de C.V.",
+      "country": "Mexico",
+      "year": 2024,
+      "amount_musd": 1000.0,
+      "tier": "T1",
+      "sector": "Other Food",
+      "tier_source": "llm",
+      "url": "https://disclosures.ifc.org/project-detail/SII/48820/gtsf-pepsico-mexico"
+    },
+    {
+      "project_number": "42848",
+      "company": "BARRY CALLEBAUT AG",
+      "country": "World Region",
+      "year": 2021,
+      "amount_musd": 1000.0,
+      "tier": "T1",
+      "sector": "Sugar and Confectionery",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/42848/gtsf-barry-calle"
+    },
+    {
+      "project_number": "34888",
+      "company": "AUCHAN HOLDING SA",
+      "country": "World Region",
+      "year": 2014,
+      "amount_musd": 345.73,
+      "tier": "T3",
+      "sector": "Retail (Including Supermarkets, Grocery Stores, etc.)",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/34888/auchan-global-i"
+    },
+    {
+      "project_number": "51743",
+      "company": "Dogus Cay ve Gida Maddeleri Uretim Pazarlama Ithalat Ihracat A.S.",
+      "country": "Turkiye",
+      "year": 2026,
+      "amount_musd": 287.55,
+      "tier": "T1",
+      "sector": "Packaged Food",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/51743/dogus-cay"
+    },
+    {
+      "project_number": "47931",
+      "company": "Coca-Cola Icecek Anonim Sirketi",
+      "country": "Central Asia and Turkiye Region",
+      "year": 2024,
+      "amount_musd": 250.0,
+      "tier": "T1",
+      "sector": "Soft Drink",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/47931/cci-international-"
+    },
+    {
+      "project_number": "48827",
+      "company": "SG FINANCE & TREASURY LIMITED",
+      "country": "Southern Europe Subregion",
+      "year": 2023,
+      "amount_musd": 250.0,
+      "tier": "T3",
+      "sector": "Retail (Including Supermarkets, Grocery Stores, etc.)",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/48827/eur-food-retail"
+    },
+    {
+      "project_number": "49409",
+      "company": "Dogus Otomotiv Servis ve Ticaret A.S.",
+      "country": "Turkiye",
+      "year": 2025,
+      "amount_musd": 234.49,
+      "tier": "T3",
+      "sector": "Grocery Retail (Supermarkets, Hypermarkets, Convenience Stores etc.)",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/49409/dogus-oto-ev"
+    },
+    {
+      "project_number": "39573",
+      "company": "D. SCHWARZ BETEILIGUNGS KG",
+      "country": "Eastern Europe Subregion",
+      "year": 2017,
+      "amount_musd": 213.5,
+      "tier": "T3",
+      "sector": "Retail (Including Supermarkets, Grocery Stores, etc.)",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/39573/schwarz-ee-v"
+    },
+    {
+      "project_number": "45824",
+      "company": "THANH THANH CONG BIEN HOA JOINT STOCK COMPANY",
+      "country": "Viet Nam",
+      "year": 2022,
+      "amount_musd": 200.0,
+      "tier": "T1",
+      "sector": "Sugar and Confectionery",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/45824/gwfp-ttc-bien-hoa-loan"
+    },
+    {
+      "project_number": "46855",
+      "company": "SC KAUFLAND ROMANIA SCS",
+      "country": "Southern Europe Subregion",
+      "year": 2022,
+      "amount_musd": 179.25,
+      "tier": "T3",
+      "sector": "Retail (Including Supermarkets, Grocery Stores, etc.)",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/46855/south-east-europe-food-retail"
+    },
+    {
+      "project_number": "48028",
+      "company": "ULKER BISKUVI SANAYI ANONIM SIRKETI",
+      "country": "Turkiye",
+      "year": 2024,
+      "amount_musd": 162.51,
+      "tier": "T1",
+      "sector": "other",
+      "tier_source": "llm",
+      "url": "https://disclosures.ifc.org/project-detail/SII/48028/ulker-fin."
+    },
+    {
+      "project_number": "38150",
+      "company": "KONINKLIJKE FRIESLANDCAMPINA NV",
+      "country": "Pakistan",
+      "year": 2016,
+      "amount_musd": 156.13,
+      "tier": "T1",
+      "sector": "Dairy Products",
+      "tier_source": "llm",
+      "url": "https://disclosures.ifc.org/project-detail/SII/38150/anagram-equity"
+    },
+    {
+      "project_number": "38323",
+      "company": "ALMARAI COMPANY",
+      "country": "Egypt, Arab Republic of",
+      "year": 2017,
+      "amount_musd": 150.0,
+      "tier": "T1",
+      "sector": "Dairy Products",
+      "tier_source": "llm",
+      "url": "https://disclosures.ifc.org/project-detail/SII/38323/almarai"
+    },
+    {
+      "project_number": "22328",
+      "company": "D. SCHWARZ BETEILIGUNGS KG",
+      "country": "Eastern Europe Subregion",
+      "year": 2004,
+      "amount_musd": 142.67,
+      "tier": "T3",
+      "sector": "Retail (Including Supermarkets, Grocery Stores, etc.)",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SPI/22328/schwarz-group"
+    },
+    {
+      "project_number": "47627",
+      "company": "PT GOTO GOJEK TOKOPEDIA TBK",
+      "country": "Indonesia",
+      "year": 2023,
+      "amount_musd": 125.0,
+      "tier": "T3",
+      "sector": "Retail (Including Supermarkets, Grocery Stores, etc.)",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/47627/goto-en"
+    },
+    {
+      "project_number": "47944",
+      "company": "JERONIMO MARTINS COLOMBIA S A S",
+      "country": "Colombia",
+      "year": 2024,
+      "amount_musd": 120.0,
+      "tier": "T3",
+      "sector": "other",
+      "tier_source": "llm",
+      "url": "https://disclosures.ifc.org/project-detail/SII/47944/ara-tiendas-green-loan"
+    },
+    {
+      "project_number": "43607",
+      "company": "LIDL DISCOUNT SRL",
+      "country": "Romania",
+      "year": 2022,
+      "amount_musd": 98.0,
+      "tier": "T3",
+      "sector": "Retail (Including Supermarkets, Grocery Stores, etc.)",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/43607/lidl-romania-rse"
+    },
+    {
+      "project_number": "40643",
+      "company": "JERONIMO MARTINS COLOMBIA S A S",
+      "country": "Colombia",
+      "year": 2018,
+      "amount_musd": 93.0,
+      "tier": "T3",
+      "sector": "Retail (Including Supermarkets, Grocery Stores, etc.)",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/40643/ara-tiendas-i"
+    },
+    {
+      "project_number": "36671",
+      "company": "KAUFLAND BULGARIA EOOD",
+      "country": "Bulgaria",
+      "year": 2015,
+      "amount_musd": 89.72,
+      "tier": "T3",
+      "sector": "Retail (Including Supermarkets, Grocery Stores, etc.)",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/36671/schwarz-iv"
+    },
+    {
+      "project_number": "37922",
+      "company": "COCA COLA BEVERAGES PAKISTAN LIMITED",
+      "country": "Pakistan",
+      "year": 2016,
+      "amount_musd": 83.57,
+      "tier": "T1",
+      "sector": "Soft Drink",
+      "tier_source": "sector_rule",
+      "url": "https://disclosures.ifc.org/project-detail/SII/37922/cci-pakistan"
+    }
+  ]
+}
